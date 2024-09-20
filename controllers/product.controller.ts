@@ -1,5 +1,27 @@
 import type { Request,Response,NextFunction } from "express";
 import productModel, { productDoc } from "../models/product.model.ts";
+
+export const getAllProducts = async(req:Request,res:Response)=>{
+    const allProducts = await productModel.find({})
+    res.json(allProducts)
+}
+
+export const getProduct = async(req:Request,res:Response)=>{
+    try{
+    const id = req.params.id
+    const product = await productModel.findById(id)
+    if (!product){
+        return res.status(404).json({
+            "message":"Product isn't found"
+        })
+    }
+    res.json(product)
+} catch(err){
+        console.error(err)
+        return res.status(400).json({"message":"and Error has occured"})
+    }
+}
+
 export const addProduct = async(req:Request<{},{},productDoc>,res:Response)=>{
     try{
         const product = await productModel.create(req.body)
